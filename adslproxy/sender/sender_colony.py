@@ -64,10 +64,14 @@ class Sender(object):
         try:
             response = requests.get(TEST_URL, proxies={
                 'http': 'http://' + proxy,
-                'https': 'https://' + proxy
+                'https': 'https://' + proxy,
+                # 'http': proxy,
+                # 'https': proxy
             }, timeout=TEST_TIMEOUT)
             if response.status_code == 200:
                 return True
+            else:
+                return False
         except (ConnectionError, ReadTimeout):
             return False
 
@@ -146,8 +150,10 @@ class Sender(object):
                 # 将代理放入数据库
                 self.set_proxy(proxy)
                 time.sleep(2)
+                return True
             else:
                 logger.error(f'Proxy invalid {proxy}')
+                return False
         else:
             # 获取 IP 失败，重新拨号
             logger.error('Get IP failed, re-dialing')
@@ -169,7 +175,7 @@ def send(servers, loop=False):
         return False
 
 def main():
-    pool = ThreadPool(5)
+    pool = ThreadPool(38)
     results = pool.map(send, adsl_servers)  # 该语句将不同的url传给各自的线程，并把执行后结果返回到results中
     success = results.count(True)
     faild = results.count(False)

@@ -101,3 +101,11 @@ ps -aef |grep squid
 netstat -lnpt
 ~~~
 
+2、安装YUM-EPEL存储库
+YUM-EPEL存储库由EPEL官方提供。
+~~~
+[root@localhost ~]# rm -rf /etc/yum.repo/*.repo
+[root@localhost ~]# rpm -ivh epel-release-latest-7.noarch.rpm
+[root@localhost ~]# yum clean all
+[root@localhost ~]# yum makecache
+~~~
