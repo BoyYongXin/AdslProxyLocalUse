@@ -7,7 +7,7 @@ env = Env()
 DIAL_CYCLE = env.int('DIAL_CYCLE', 100)
 
 # Redis数据库IP
-REDIS_HOST = env.str('REDIS_HOST', '10.126.30.6')
+REDIS_HOST = env.str('REDIS_HOST', '')
 # Redis数据库密码, 如无则填None
 REDIS_PASSWORD = env.str('REDIS_PASSWORD', None)
 # Redis数据库端口
@@ -47,5 +47,6 @@ SQUID_KEEPER_INTERVAL = 30
 
 # adsl 拨号服务器集群
 ADSL_SERVERS = [
+    # 江西萍乡电信拨号VPS1型
 
 ]

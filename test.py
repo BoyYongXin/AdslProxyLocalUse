@@ -27,6 +27,6 @@ def test_proxy( proxy):
     except (ConnectionError, ReadTimeout):
         return False
 if __name__ == '__main__':
-    proxy = "182.99.251.232:3128"
+    proxy = "10.60.102.102:3128"
     if test_proxy(proxy):
         print('sussess')

@@ -35,7 +35,7 @@ class SquidKeeper:
         :return:
         """
         logger.info('准备加载到squid中')
-        with open('squid.conf', 'r') as f:
+        with open('/etc/squid/squid.conf', 'r') as f:
             squid_conf = f.readlines()
         squid_conf.append('\n# Cache peer config\n')
         for proxy in proxy_list:
@@ -43,7 +43,7 @@ class SquidKeeper:
             squid_conf.append(self.peer_conf % (ip, port))
         with open('/etc/squid/squid.conf', 'w') as f:
             f.writelines(squid_conf)
-        failed = os.system('squid -k reconfigure')
+        failed = os.system('squid -k reconfigure') #重新读写配置文件
         # 这是一个容错措施
         # 当重新加载配置文件失败时，会杀死全部相关进行并重试
         if failed:
@@ -71,8 +71,11 @@ class SquidKeeper:
         :return:
         """
         while True:
+            proxy_lists = []
             proxy_list = self.read_new_ip()
-            self.update_conf(proxy_list)
+            for proxy in proxy_list.values():
+                proxy_lists.append(proxy)
+            self.update_conf(proxy_lists)
             logger.info('*' * 40)
             time.sleep(settings.SQUID_KEEPER_INTERVAL)
 
