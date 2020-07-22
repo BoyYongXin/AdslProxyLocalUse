@@ -4,7 +4,7 @@ from environs import Env
 env = Env()
 
 # 拨号间隔，单位秒
-DIAL_CYCLE = env.int('DIAL_CYCLE', 100)
+DIAL_CYCLE = env.int('DIAL_CYCLE', 120)
 
 # Redis数据库IP
 REDIS_HOST = env.str('REDIS_HOST', '10.126.30.6')

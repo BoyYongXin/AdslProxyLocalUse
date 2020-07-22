@@ -3,8 +3,8 @@ import json
 import tornado.ioloop
 import tornado.web
 from tornado.web import RequestHandler, Application
-from adslproxy.db import RedisClient
-from adslproxy.settings import *
+from db import RedisClient
+from settings import *
 from loguru import logger
 
 

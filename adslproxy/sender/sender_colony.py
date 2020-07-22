@@ -9,8 +9,8 @@ from loguru import logger
 import time
 from retrying import retry, RetryError
 import redis
-from adslproxy.db import RedisClient
-from adslproxy.settings import *
+from db import RedisClient
+from settings import *
 
 adsl_servers = ADSL_SERVERS
 
@@ -189,11 +189,11 @@ def main():
     pool.join()
 
 if __name__ == '__main__':
-    main()
-    # while True:
-    #     logger.info('Starting dial...')
-    #     main()
-    #     time.sleep(DIAL_CYCLE)
+    # main()
+    while True:
+        logger.info('Starting dial...')
+        main()
+        time.sleep(DIAL_CYCLE)
 
 
 

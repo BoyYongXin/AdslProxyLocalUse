@@ -6,7 +6,7 @@ from loguru import logger
 import time
 from retrying import retry, RetryError
 import redis
-from adslproxy.db import RedisClient
+from db import RedisClient
 from environs import Env
 env = Env()
 

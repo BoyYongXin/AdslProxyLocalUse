@@ -1,9 +1,9 @@
 import time
 # from requests import ReadTimeout
 from requests.exceptions import ConnectionError, ReadTimeout
-from adslproxy.db import RedisClient
+from db import RedisClient
 import requests
-from adslproxy import settings
+import settings
 from collections import defaultdict
 from loguru import logger
 

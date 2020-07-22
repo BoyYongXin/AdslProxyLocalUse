@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-
 from loguru import logger
-from adslproxy import settings
+import settings
 import time
 import os
 import subprocess
-from adslproxy.db import RedisClient
+from db import RedisClient
 
 class SquidKeeper:
 
@@ -82,9 +81,11 @@ class SquidKeeper:
             proxy_list = self.read_new_ip()
             for proxy in proxy_list.values():
                 proxy_lists.append(proxy)
-            self.update_conf(proxy_lists)
-            logger.info('*' * 40)
-            time.sleep(settings.SQUID_KEEPER_INTERVAL)
+            print(proxy_lists)
+            break
+            # self.update_conf(proxy_lists)
+            # logger.info('*' * 40)
+            # time.sleep(settings.SQUID_KEEPER_INTERVAL)
 
 
 if __name__ == '__main__':
