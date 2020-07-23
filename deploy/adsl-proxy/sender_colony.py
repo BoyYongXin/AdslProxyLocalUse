@@ -66,12 +66,15 @@ class Sender(object):
         :return: 测试结果
         """
         try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+            }
             response = requests.get(TEST_URL, proxies={
                 'http': 'http://' + proxy,
                 'https': 'https://' + proxy,
                 # 'http': proxy,
                 # 'https': proxy
-            }, timeout=TEST_TIMEOUT)
+            }, timeout=TEST_TIMEOUT,headers=headers,verify=False)
             if response.status_code == 200:
                 return True
             else:

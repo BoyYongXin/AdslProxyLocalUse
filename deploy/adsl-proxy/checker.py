@@ -21,10 +21,14 @@ class Checker(object):
         :return: 测试结果
         """
         try:
+
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+            }
             response = requests.get(settings.TEST_URL, proxies={
                 'http': 'http://' + proxy,
                 'https': 'https://' + proxy
-            }, timeout=settings.TEST_TIMEOUT)
+            }, timeout=settings.TEST_TIMEOUT,headers=headers,verify=False)
             logger.debug(f'Using {proxy} to test {settings.TEST_URL}...')
             if response.status_code == 200:
                 return True
