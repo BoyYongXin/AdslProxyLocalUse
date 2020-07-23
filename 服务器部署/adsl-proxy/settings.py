@@ -42,12 +42,10 @@ USERNAME = 'your_username'
 # 密码
 PASSWORD = 'your_password'
 # squid从redis中加载新ip的频率
-SQUID_KEEPER_INTERVAL = 60
+SQUID_KEEPER_INTERVAL = 30
 
 
 # adsl 拨号服务器集群
 ADSL_SERVERS = [
-
-
 
 ]

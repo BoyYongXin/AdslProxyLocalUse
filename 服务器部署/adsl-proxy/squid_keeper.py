@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from loguru import logger
-import settings
+import settings as settings
 import time
 import os
 import subprocess

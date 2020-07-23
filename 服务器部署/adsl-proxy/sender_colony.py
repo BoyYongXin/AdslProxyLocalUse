@@ -1,7 +1,5 @@
 # !/usr/bin/env python
 # -*-coding=utf-8 -*-
-import os
-import sys
 from multiprocessing.dummy import Pool as ThreadPool
 import re
 import requests
@@ -11,10 +9,14 @@ from loguru import logger
 import time
 from retrying import retry, RetryError
 import redis
-from adslproxy.db import RedisClient
-from adslproxy import settings 
-from adslproxy.squid_keeper import squid_keeper
+from db import RedisClient
+import settings as settings
+
 adsl_servers = settings.ADSL_SERVERS
+PROXY_PORT = settings.PROXY_PORT
+TEST_URL = settings.TEST_URL
+TEST_TIMEOUT = settings.TEST_TIMEOUT
+DIAL_CYCLE = settings.DIAL_CYCLE
 
 class Monitor(object):
     def __init__(self, server_ip, port, user, pwd):
@@ -69,7 +71,7 @@ class Sender(object):
                 'https': 'https://' + proxy,
                 # 'http': proxy,
                 # 'https': proxy
-            }, timeout=settings.TEST_TIMEOUT)
+            }, timeout=TEST_TIMEOUT)
             if response.status_code == 200:
                 return True
             else:
@@ -126,7 +128,7 @@ class Sender(object):
         while True:
             logger.info('Starting dial...')
             self.run()
-            time.sleep(settings.DIAL_CYCLE)
+            time.sleep(DIAL_CYCLE)
 
     def run(self):
         """
@@ -146,7 +148,7 @@ class Sender(object):
         m.close_net()
         ip = self.parseIfconfig(content)
         if ip:
-            proxy = "%s:%s" % (ip, settings.PROXY_PORT)
+            proxy = "%s:%s" % (ip, PROXY_PORT)
             if self.test_proxy(proxy):
                 logger.info(f'Valid proxy {proxy}')
                 # 将代理放入数据库
@@ -191,12 +193,12 @@ def main():
     pool.join()
 
 if __name__ == '__main__':
-    # main()
-    while True:
-        logger.info('Starting dial...')
-        main()
-        squid_keeper.SquidKeeper().main2() # 当代理重新拨号更换ip后，随后就更新squid.conf文件
-        time.sleep(settings.DIAL_CYCLE)
+    main()
+    # while True:
+    #     logger.info('Starting dial...')
+    #     main()
+        # squid_keeper.SquidKeeper().main2() # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+        # time.sleep(DIAL_CYCLE)
 
 
 
