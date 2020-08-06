@@ -18,7 +18,7 @@ REDIS_KEY = env.str('REDIS_KEY', 'adsl1')
 # 测试URL
 TEST_URL = env.str('TEST_URL', 'http://www.baidu.com')
 # 测试最大失败次数
-TEST_MAX_ERROR_COUNT = env.int('TEST_MAX_ERROR_COUNT', 10)
+TEST_MAX_ERROR_COUNT = env.int('TEST_MAX_ERROR_COUNT', 5)
 # 测试超时时间
 TEST_TIMEOUT = env.int('TEST_TIMEOUT', 20)
 # 测试周期
@@ -42,10 +42,12 @@ USERNAME = 'your_username'
 # 密码
 PASSWORD = 'your_password'
 # squid从redis中加载新ip的频率
-SQUID_KEEPER_INTERVAL = 30
+SQUID_KEEPER_INTERVAL = 60
 
 
 # adsl 拨号服务器集群
 ADSL_SERVERS = [
+
+
 
 ]

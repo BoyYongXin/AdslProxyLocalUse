@@ -39,13 +39,15 @@ class SquidKeeper:
         with open('squid.conf', 'r') as f:
             squid_conf = f.readlines()
         squid_conf.append('\n# Cache peer config\n')
-        # squid_conf.append('\nhttp_port 3201 vhost\n')
         for proxy in proxy_list:
             ip, port = proxy.split(':')
             squid_conf.append(self.peer_conf % (ip, port))
         with open('/etc/squid/squid.conf', 'w') as f:
             f.writelines(squid_conf)
-        failed = os.system('squid -k reconfigure') #重新读写配置文件
+        failed = os.system('service squid reload') #重新读写配置文件
+        if failed != 0:
+            os.system('service squid reload')
+            # os.system('squid -k reconfigure')
         # if os.system('squid -k shutdown') != 0:
         #     os.system('squid -k shutdown')
         # failed = os.system('squid -f /etc/squid/squid.conf') #重新读写配置文件

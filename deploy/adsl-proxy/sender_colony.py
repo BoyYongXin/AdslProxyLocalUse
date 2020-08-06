@@ -11,6 +11,7 @@ from retrying import retry, RetryError
 import redis
 from db import RedisClient
 import settings as settings
+import squid_keeper
 
 adsl_servers = settings.ADSL_SERVERS
 PROXY_PORT = settings.PROXY_PORT
@@ -29,7 +30,7 @@ class Monitor(object):
             self.client.connect(server_ip, port, username=user, password=pwd, timeout=4)
             logger.info('------------认证成功!.....-----------')
         except Exception:
-            logger.error('连接远程linux服务器(ip:{server_ip})发生异常!请检查用户名和密码是否正确!')
+            logger.error('连接远程linux服务器(ip:{server_ip})发生异常!请检查用户名和密码是否正确!'.format(server_ip))
 
     def link_server(self, cmd):
         """连接服务器发送命令"""
@@ -146,6 +147,7 @@ class Sender(object):
         # 拨号
         m = Monitor(self.ADSLHOST, self.ADSLPORT, self.ADSLUSER, self.ADSLPWD)
         m.link_server("adsl-stop")
+        m.link_server("adsl-stop")
         m.link_server("adsl-start")
         content = m.link_server("ifconfig")
         m.close_net()
@@ -156,7 +158,6 @@ class Sender(object):
                 logger.info(f'Valid proxy {proxy}')
                 # 将代理放入数据库
                 self.set_proxy(proxy)
-                time.sleep(2)
                 return True
             else:
                 logger.error(f'Proxy invalid {proxy}')
@@ -176,13 +177,12 @@ def send(servers, loop=False):
     try:
         sender = Sender(server_ip, port, user, pwd, clent_name)
         sender.loop() if loop else sender.run()
-        return True
     except Exception as err:
         logger.debug("send start error {}".format(err))
         return False
 
 def main():
-    pool = ThreadPool(38)
+    pool = ThreadPool(41)
     results = pool.map(send, adsl_servers)  # 该语句将不同的url传给各自的线程，并把执行后结果返回到results中
     success = results.count(True)
     faild = results.count(False)
@@ -196,12 +196,13 @@ def main():
     pool.join()
 
 if __name__ == '__main__':
-    main()
-    # while True:
-    #     logger.info('Starting dial...')
-    #     main()
-        # squid_keeper.SquidKeeper().main2() # 当代理重新拨号更换ip后，随后就更新squid.conf文件
-        # time.sleep(DIAL_CYCLE)
+    # main()
+    # squid_keeper.SquidKeeper().main2()  # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+    while True:
+        logger.info('Starting dial...')
+        main()
+        squid_keeper.SquidKeeper().main2() # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+        time.sleep(DIAL_CYCLE)
 
 
 

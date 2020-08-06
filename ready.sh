@@ -13,10 +13,12 @@ squid
 
 systemctl enable squid.service
 systemctl start squid.service
+service squid reload
+service squid restart
 
 iptables -I INPUT -p tcp --dport 3128 -j ACCEPT
 
-curl -x 111.126.76.54:3128 httpbin.org/get
+curl -x  61.131.227.180:3128 httpbin.org/get
 
 
 /home/worker/yangyongxin
