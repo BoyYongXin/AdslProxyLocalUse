@@ -12,6 +12,7 @@ import redis
 from db import RedisClient
 import settings as settings
 import squid_keeper
+from time_out_deal import *
 
 adsl_servers = settings.ADSL_SERVERS
 PROXY_PORT = settings.PROXY_PORT
@@ -96,7 +97,7 @@ class Sender(object):
                 ip = ''
         return ip
 
-    @retry(retry_on_result=lambda x: x is not True, stop_max_attempt_number=10)
+    @retry(retry_on_result=lambda x: x is not True, stop_max_attempt_number=5)
     def remove_proxy(self):
         """
         移除代理
@@ -134,6 +135,7 @@ class Sender(object):
             self.run()
             time.sleep(DIAL_CYCLE)
 
+    @retry(stop_max_attempt_number=3)
     def run(self):
         """
         拨号主进程
@@ -162,10 +164,10 @@ class Sender(object):
             else:
                 logger.error(f'Proxy invalid {proxy}')
                 return False
-        else:
-            # 获取 IP 失败，重新拨号
-            logger.error('Get IP failed, re-dialing')
-            self.run()
+        # else:
+        #     # 获取 IP 失败，重新拨号
+        #     logger.error('Get IP failed, re-dialing')
+        #     self.run()
 
 
 def send(servers, loop=False):
@@ -181,6 +183,12 @@ def send(servers, loop=False):
         logger.debug("send start error {}".format(err))
         return False
 
+def after_timeout():  # 超时后的处理函数
+    print("Time out!")
+    squid_keeper.SquidKeeper().main2()
+    # raise Exception
+
+@set_timeout(30, after_timeout) # 限时 30 秒超时
 def main():
     pool = ThreadPool(41)
     results = pool.map(send, adsl_servers)  # 该语句将不同的url传给各自的线程，并把执行后结果返回到results中
@@ -196,13 +204,31 @@ def main():
     pool.join()
 
 if __name__ == '__main__':
+    '''
     # main()
     # squid_keeper.SquidKeeper().main2()  # 当代理重新拨号更换ip后，随后就更新squid.conf文件
     while True:
         logger.info('Starting dial...')
-        main()
-        squid_keeper.SquidKeeper().main2() # 当代理重新拨号更换ip后，随后就更新squid.conf文件
-        time.sleep(DIAL_CYCLE)
+        try:
+            main()
+            squid_keeper.SquidKeeper().main2()  # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+            time.sleep(DIAL_CYCLE)
+        except:
+            squid_keeper.SquidKeeper().main2()  # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+            time.sleep(DIAL_CYCLE)
+            continue
+    '''
+    while True:
+        logger.info('Starting dial...')
+        try:
+            main()
+            squid_keeper.SquidKeeper().main2()  # 当代理重新拨号更换ip后，随后就更新squid.conf文件
+            time.sleep(DIAL_CYCLE)
+        except Exception as err:
+            time.sleep(DIAL_CYCLE)
+            logger.error(err)
+            continue
+
 
 
 
